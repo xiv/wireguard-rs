@@ -15,6 +15,9 @@ pub trait Status: Send + 'static {
 
 pub trait Writer: Send + Sync + 'static {
     type Error: Error;
+    /// Offset demarking the start of the actual packet data in the buffer. Some implementations
+    /// require extra padding in the data to be passed back to the system.
+    const MESSAGE_OFFSET: usize;
 
     /// Receive a cryptkey routed IP packet
     ///
@@ -25,7 +28,7 @@ pub trait Writer: Send + Sync + 'static {
     /// # Returns
     ///
     /// Unit type or an error
-    fn write(&self, src: &mut [u8], offset: usize) -> Result<(), Self::Error>;
+    fn write(&self, src: &[u8]) -> Result<(), Self::Error>;
 }
 
 pub trait Reader: Send + 'static {

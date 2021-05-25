@@ -105,10 +105,10 @@ impl Reader for LinuxTunReader {
 
 impl Writer for LinuxTunWriter {
     type Error = LinuxTunError;
+    const MESSAGE_OFFSET: usize = 0;
 
-    fn write(&self, src: &[u8], offset: usize) -> Result<(), Self::Error> {
-        let data = &src[offset..];
-        match unsafe { libc::write(self.fd, data.as_ptr() as _, data.len() as _) } {
+    fn write(&self, src: &[u8]) -> Result<(), Self::Error> {
+        match unsafe { libc::write(self.fd, src.as_ptr() as _, src.len() as _) } {
             -1 => Err(LinuxTunError::Closed),
             _ => Ok(()),
         }
